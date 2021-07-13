@@ -745,7 +745,6 @@ function createProperties()
     runuser -l oracle -c "echo wlsDomainName=${wlsDomainName} >> ${mountpointPath}/azurevm.properties"
   else
     echo "For managed server ${wlsServerName}"
-  	runuser -l oracle -c "echo adminVMExternalHostName=${adminVMExternalHostName} >> ${mountpointPath}/azurevm.properties"
     runuser -l oracle -c "echo ${wlsServerName}VMInternalHostName=${hostname} >> ${mountpointPath}/azurevm.properties"
   fi
 }
