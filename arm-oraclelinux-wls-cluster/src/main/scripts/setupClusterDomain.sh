@@ -9,7 +9,7 @@ function echo_stderr ()
 #Function to display usage message
 function usage()
 {
-  echo_stderr "./setupClusterDomain.sh <wlsDomainName> <wlsUserName> <wlsPassword> <wlsServerName> <wlsAdminHost> <storageAccountName> <storageAccountKey> <mountpointPath> <enableHTTPAdminListenPort> <isCustomSSLEnabled> [<customIdentityKeyStoreData> <customIdentityKeyStorePassPhrase> <customIdentityKeyStoreType> <customTrustKeyStoreData> <customTrustKeyStorePassPhrase> <customTrustKeyStoreType> <serverPrivateKeyAlias <serverPrivateKeyPassPhrase>]"
+  echo_stderr "./setupClusterDomain.sh <wlsDomainName> <wlsUserName> <wlsPassword> <wlsServerName> <wlsAdminHost> <storageAccountName> <storageAccountKey> <mountpointPath> <enableHTTPAdminListenPort> <isCustomSSLEnabled> [<customIdentityKeyStoreData> <customIdentityKeyStorePassPhrase> <customIdentityKeyStoreType> <customTrustKeyStoreData> <customTrustKeyStorePassPhrase> <customTrustKeyStoreType> <serverPrivateKeyAlias <serverPrivateKeyPassPhrase>] <adminDNS>"
 }
 
 function installUtilities()
@@ -729,6 +729,16 @@ sudo chmod -R 750 ${stopWebLogicScript}
 
 }
 
+
+#Create properties file for vm dns and other details 
+function createProperties()
+{
+
+  echo "adminDNS=${adminDNS}" >> $mountpointPath/domainvm.properties
+
+}
+
+
 #main script starts here
 
 CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -779,6 +789,7 @@ then
     export customTrustKeyStoreType="${17}"
     export serverPrivateKeyAlias="${18}"
     export serverPrivateKeyPassPhrase="${19}"
+    export adminDNS="${20}"
 else
     isCustomSSLEnabled="false"
 fi
@@ -821,6 +832,8 @@ cleanup
 
 installUtilities
 mountFileShare
+
+createProperties
 
 if [ $wlsServerName == "admin" ];
 then
