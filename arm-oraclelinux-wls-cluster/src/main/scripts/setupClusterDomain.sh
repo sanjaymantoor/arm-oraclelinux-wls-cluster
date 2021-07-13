@@ -736,17 +736,17 @@ function createProperties()
 
   wlsServer=$1
   hostname=`hostname -f`
-  echo "Creating azure vm properties at ${DOMAIN_PATH}/${wlsDomainName}"
+  echo "Creating azure vm properties at ${mountpointPath}/azurevm.properties"
   if [ $wlsServer == "admin" ];
   then
     echo "For admin server vm"
-    runuser -l oracle -c "echo adminVMExternalHostName=${adminVMExternalHostName} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
-    runuser -l oracle -c "echo adminVMInternalHostName=${hostname} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
-    runuser -l oracle -c "echo wlsDomainName=${wlsDomainName} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
+    runuser -l oracle -c "echo adminVMExternalHostName=${adminVMExternalHostName} >> ${mountpointPath}/azurevm.properties"
+    runuser -l oracle -c "echo adminVMInternalHostName=${hostname} >> ${mountpointPath}/azurevm.properties"
+    runuser -l oracle -c "echo wlsDomainName=${wlsDomainName} >> ${mountpointPath}/azurevm.properties"
   else
     echo "For managed server ${wlsServerName}"
-  	runuser -l oracle -c "echo adminVMExternalHostName=${adminVMExternalHostName} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
-    runuser -l oracle -c "echo ${wlsServerName}VMInternalHostName=${hostname} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
+  	runuser -l oracle -c "echo adminVMExternalHostName=${adminVMExternalHostName} >> ${mountpointPath}/azurevm.properties"
+    runuser -l oracle -c "echo ${wlsServerName}VMInternalHostName=${hostname} >> ${mountpointPath}/azurevm.properties"
   fi
 }
 
