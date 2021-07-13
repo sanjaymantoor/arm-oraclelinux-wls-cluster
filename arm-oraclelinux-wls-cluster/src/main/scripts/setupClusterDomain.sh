@@ -9,7 +9,7 @@ function echo_stderr ()
 #Function to display usage message
 function usage()
 {
-  echo_stderr "./setupClusterDomain.sh <wlsDomainName> <wlsUserName> <wlsPassword> <wlsServerName> <wlsAdminHost> <storageAccountName> <storageAccountKey> <mountpointPath> <enableHTTPAdminListenPort> <isCustomSSLEnabled> [<customIdentityKeyStoreData> <customIdentityKeyStorePassPhrase> <customIdentityKeyStoreType> <customTrustKeyStoreData> <customTrustKeyStorePassPhrase> <customTrustKeyStoreType> <serverPrivateKeyAlias <serverPrivateKeyPassPhrase>] <adminDNS>"
+  echo_stderr "./setupClusterDomain.sh <wlsDomainName> <wlsUserName> <wlsPassword> <wlsServerName> <wlsAdminHost> <storageAccountName> <storageAccountKey> <mountpointPath> <enableHTTPAdminListenPort> <isCustomSSLEnabled> <adminVMExternalHostName> [<customIdentityKeyStoreData> <customIdentityKeyStorePassPhrase> <customIdentityKeyStoreType> <customTrustKeyStoreData> <customTrustKeyStorePassPhrase> <customTrustKeyStoreType> <serverPrivateKeyAlias <serverPrivateKeyPassPhrase>]"
 }
 
 function installUtilities()
@@ -734,8 +734,15 @@ sudo chmod -R 750 ${stopWebLogicScript}
 function createProperties()
 {
 
-  echo "adminDNS=${adminDNS}" >> $mountpointPath/domainvm.properties
-
+  hostname=`hostname -f`
+  if [ $wlsServerName == "admin" ];
+  then
+    echo "adminVMExternalHostName=${adminVMExternalHostName}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
+    echo "adminVMInternalHostName=${hostname}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
+    echo "wlsDomainName=${wlsDomainName}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
+  else
+    echo "${wlsServerName}VMInternalHostName=${hostname}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
+  fi
 }
 
 
@@ -774,22 +781,23 @@ export mountpointPath=${9}
 export isHTTPAdminListenPortEnabled="${10}"
 isHTTPAdminListenPortEnabled="${isHTTPAdminListenPortEnabled,,}"
 
-export isCustomSSLEnabled="${11}"
+export adminVMExternalHostName="${11}"
+
+export isCustomSSLEnabled="${12}"
 isCustomSSLEnabled="${isCustomSSLEnabled,,}"
 
 #case insensitive check
 if [ "${isCustomSSLEnabled}" == "true" ];
 then
     echo "custom ssl enabled. Reading keystore information"
-    export customIdentityKeyStoreData="${12}"
-    export customIdentityKeyStorePassPhrase="${13}"
-    export customIdentityKeyStoreType="${14}"
-    export customTrustKeyStoreData="${15}"
-    export customTrustKeyStorePassPhrase="${16}"
-    export customTrustKeyStoreType="${17}"
-    export serverPrivateKeyAlias="${18}"
-    export serverPrivateKeyPassPhrase="${19}"
-    export adminDNS="${20}"
+    export customIdentityKeyStoreData="${13}"
+    export customIdentityKeyStorePassPhrase="${14}"
+    export customIdentityKeyStoreType="${15}"
+    export customTrustKeyStoreData="${16}"
+    export customTrustKeyStorePassPhrase="${17}"
+    export customTrustKeyStoreType="${18}"
+    export serverPrivateKeyAlias="${19}"
+    export serverPrivateKeyPassPhrase="${20}"
 else
     isCustomSSLEnabled="false"
 fi
@@ -832,7 +840,6 @@ cleanup
 
 installUtilities
 mountFileShare
-
 createProperties
 
 if [ $wlsServerName == "admin" ];
