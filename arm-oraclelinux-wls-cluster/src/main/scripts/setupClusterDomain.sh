@@ -850,8 +850,8 @@ mountFileShare
 if [ $wlsServerName == "admin" ];
 then
   updateNetworkRules "admin"
-  createProperties "admin"
   create_adminSetup
+  createProperties "admin"
   createStopWebLogicScript
   create_nodemanager_service
   admin_boot_setup
@@ -861,8 +861,8 @@ then
   wait_for_admin
 else
   updateNetworkRules "managed"
-  createProperties "managed"
   create_managedSetup
+  createProperties "managed"
   create_nodemanager_service
   enabledAndStartNodeManagerService
   wait_for_admin
