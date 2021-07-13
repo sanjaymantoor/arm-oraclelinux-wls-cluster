@@ -734,14 +734,19 @@ sudo chmod -R 750 ${stopWebLogicScript}
 function createProperties()
 {
 
+  wlsServer=$1
   hostname=`hostname -f`
-  if [ $wlsServerName == "admin" ];
+  echo "Creating azure vm properties at ${DOMAIN_PATH}/${wlsDomainName}"
+  if [ $wlsServer == "admin" ];
   then
-    echo "adminVMExternalHostName=${adminVMExternalHostName}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
-    echo "adminVMInternalHostName=${hostname}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
-    echo "wlsDomainName=${wlsDomainName}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
+    echo "For admin server vm"
+    runuser -l oracle -c "echo adminVMExternalHostName=${adminVMExternalHostName} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
+    runuser -l oracle -c "echo adminVMInternalHostName=${hostname} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
+    runuser -l oracle -c "echo wlsDomainName=${wlsDomainName} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
   else
-    echo "${wlsServerName}VMInternalHostName=${hostname}" >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties
+    echo "For managed server ${wlsServerName}"
+  	runuser -l oracle -c "echo adminVMExternalHostName=${adminVMExternalHostName} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
+    runuser -l oracle -c "echo ${wlsServerName}VMInternalHostName=${hostname} >> ${DOMAIN_PATH}/${wlsDomainName}/azurevm.properties"
   fi
 }
 
@@ -840,11 +845,12 @@ cleanup
 
 installUtilities
 mountFileShare
-createProperties
+
 
 if [ $wlsServerName == "admin" ];
 then
   updateNetworkRules "admin"
+  createProperties "admin"
   create_adminSetup
   createStopWebLogicScript
   create_nodemanager_service
@@ -855,6 +861,7 @@ then
   wait_for_admin
 else
   updateNetworkRules "managed"
+  createProperties "managed"
   create_managedSetup
   create_nodemanager_service
   enabledAndStartNodeManagerService
