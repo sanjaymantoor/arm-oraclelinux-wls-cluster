@@ -736,7 +736,7 @@ jobs:
             <<< "${{ env.repoName }}/test/scripts/parameters-deploy-coherence.json \
             ${{ env.adminVMName }} \
             ${{ env.wlsPassword }} \
-            "${{ matrix.images }}" \
+            ${{ matrix.images }} \
             ${{ env.location }} \
             ${storageAccount} \
             ${{ env.wlsDomainName }} \
@@ -780,7 +780,7 @@ jobs:
               ${{ env.adminVMName }}:${adminConsolePort} \
               weblogic \
               ${{ env.numberOfInstances }} \
-              "${{ matrix.images }}" \
+              ${{ matrix.images }} \
               ${storageAccount} \
               ${{ env.wlsDomainName }} \
               ${{ env.location }} \
@@ -836,7 +836,7 @@ jobs:
               ${{ env.adminVMName }} \
               weblogic \
               1 \
-              "${{ matrix.images }}" \
+              ${{ matrix.images }} \
               ${storageAccount} \
               ${{ env.wlsDomainName }} \
               ${{ env.location }} \
